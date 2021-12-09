@@ -1,0 +1,27 @@
+{
+  "name": "ghostkitchen-iii",
+  "version": "0.0.0",
+  "author": "Katerina Bosko",
+  "license": "MIT",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./node_modules/nodemon/bin/nodemon.js ./bin/www",
+    "prepopulate": "./db/seed/prepopulateRedis.js"
+  },
+  "dependencies": {
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "ejs": "~2.6.1",
+    "express": "~4.16.1",
+    "http-errors": "~1.6.3",
+    "morgan": "~1.9.1",
+    "nodemon": "^2.0.15",
+    "redis": "^4.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.2.0",
+    "eslint-config-prettier": "^8.3.0",
+    "prettier": "^2.4.1"
+  }
+}

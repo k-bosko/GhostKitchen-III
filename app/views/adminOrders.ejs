@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GhostKitchen</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+</head>
+
+<body>
+    <main>
+        <div class="container">
+            <div>
+                <h3>
+                  GhostKitchen App
+                </h3>
+            </div>
+            <div class="p-4">
+                <div class="display-4">
+                    Current Orders
+                </div>
+                <br/>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <!-- <th scope="col">Order #</th> -->
+                            <th scope="col">Brand</th>
+                            <th scope="col">Meal</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Pickup Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% orders.forEach(function (f) {%>
+                                <!-- <td scope="col">
+                                    <%= f.order_id %>
+                                </td> -->
+                                <td scope="col">
+                                    <%= f.meal_info.brand_name %>
+                                </td>
+                                <td scope="col" style="text-transform:capitalize">
+                                    <%= f.meal_info.name %>
+                                </td>
+                                <td scope="col">
+                                    <%= f.order_quantity %>
+                                </td>
+                                <td scope="col" style="text-transform:capitalize">
+                                    <%= f.pickup.type %>
+                                </td>
+                                <td>
+                                    <form action="/admin/orders/update" method="POST">
+                                        <button type="submit" class="btn btn-danger"
+                                        name="orderID" value=<%= f._id %>>
+                                            PICKED UP
+                                        </button>
+                                    </form>
+                                </td>
+                                </form>
+                            </tr>
+                            <% }) %>
+                    </tbody>
+                </table>
+                <form action="/admin" method="GET">
+                    <button type="submit" class="btn btn-primary" style="width: 30%;">
+                    Home
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>
