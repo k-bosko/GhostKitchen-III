@@ -1,0 +1,13 @@
+[{"brand_name":"Burgertoom","brand_id":3,"meal_id":2,"meal_name":"Burger Special","meal_desc":"Dill pickle, cheddar cheese, tomato, red onion, ground chuck","calories":500,"price":9.9900000000000002131},
+{"brand_name":"PsychoWings","brand_id":4,"meal_id":3,"meal_name":"Chicken Wings","meal_desc":"Chicken wings, ranch dressing, hot sauce, honey, butter","calories":700,"price":17.989999999999998436},
+{"brand_name":"Romano","brand_id":1,"meal_id":15,"meal_name":"BBQ","meal_desc":"Beef, sauce, seasoning","calories":400,"price":50},
+{"brand_name":"Romano","brand_id":1,"meal_id":19,"meal_name":"Chicken N Fries","meal_desc":"Orange chicken with side of French fries","calories":450,"price":15.990000000000000213},
+{"brand_name":"Romano","brand_id":1,"meal_id":20,"meal_name":"Asian box","meal_desc":"rice, egg, carrots, onions","calories":300,"price":12.990000000000000212},
+{"brand_name":"OvenFresh","brand_id":2,"meal_id":32,"meal_name":"Veggie Pizza","meal_desc":"Fresh mushrooms, fresh tomatoes, bell peppers, black olives & red onions","calories":670,"price":22.989999999999998435},
+{"brand_name":"PsychoWings","brand_id":4,"meal_id":33,"meal_name":"Mac N Cheese","meal_desc":"Elbow macaroni, gruyere cheese, heavy whipping cream","calories":550,"price":15.990000000000000213},
+{"brand_name":"Burgertoom","brand_id":3,"meal_id":34,"meal_name":"Basic Beef Burger","meal_desc":"Coles beef mince, tomato sauce, cheddar cheese, worcestershire","calories":450,"price":12.5},
+{"brand_name":"OvenFresh","brand_id":2,"meal_id":35,"meal_name":"Pizza Hawaii","meal_desc":"Canadian bacon, cheese, cooked ham, pineapple","calories":590,"price":13.75},
+{"brand_name":"Perltonbury","brand_id":5,"meal_id":36,"meal_name":"Beef (Asada) Sandwich","meal_desc":"Cheese, avocado, tomato, onion, jalapeno, and mayonnaise","calories":350,"price":9.9900000000000002131},
+{"brand_name":"Perltonbury","brand_id":5,"meal_id":37,"meal_name":"Milaneza Sandwich","meal_desc":"Cheese, avocado, tomato, onion, jalapeno, and mayonnaise","calories":250,"price":8.9900000000000002131},
+{"brand_name":"Anatomy Kitchen","brand_id":6,"meal_id":38,"meal_name":"German Chocolate","meal_desc":"chocolate pudding","calories":320,"price":3.5},
+{"brand_name":"Anatomy Kitchen","brand_id":6,"meal_id":39,"meal_name":"Velvet Cake","meal_desc":"lemon raspberry cake","calories":150,"price":4.9900000000000002131}]
