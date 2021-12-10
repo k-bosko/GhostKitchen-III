@@ -124,63 +124,62 @@ router.get("/user/orders/", async function (req, res, next) {
   res.render("currentOrders", { orders: orders });
 });
 
-// /* GET update order page. */
-// router.get("/user/orders/:orderID/", async function (req, res, next) {
-//   console.log("Got GET order update request");
+/* GET update order page. */
+router.get("/user/orders/:orderID/", async function (req, res, next) {
+  console.log("Got GET order update request");
 
-//   const orderID = req.params.orderID;
+  const orderID = req.params.orderID;
 
-//   console.log("got order details", orderID);
+  console.log("got order details", orderID);
 
-//   const orderDetails = await myDB.getOrderByID(orderID);
+  const orderDetails = await myDB.getOrder(req.user.id, orderID);
+  const pickups = await myDB.getPickupTypes();
 
-//   const pickups = await myDB.getPickup();
+  console.log("order details", orderDetails);
+  res.render("orderUpdate", {
+    orderDetails: orderDetails,
+    pickups: pickups,
+  });
+});
 
-//   console.log("order details", orderDetails);
-//   res.render("orderUpdate", {
-//     orderDetails: orderDetails,
-//     pickups: pickups,
-//   });
-// });
+/* POST update order page. */
+router.post("/user/orders/update/", async function (req, res, next) {
+  if (req.body.orderID === "delete") {
+    next();
+    return;
+  }
+  console.log(`Got POST order update request - ${req.body.orderID}`);
+  // console.log(req.body);
 
-// /* POST update order page. */
-// router.post("/user/orders/update/", async function (req, res, next) {
-//   if (req.body.orderID === "delete") {
-//     next();
-//     return;
-//   }
-//   console.log(`Got POST order update request - ${req.body.orderID}`);
-//   // console.log(req.body);
+  const orderID = req.body.orderID;
+  const quantity = parseInt(req.body.quantity);
+  const pickupID = parseInt(req.body.pickupID);
 
-//   const orderID = req.body.orderID;
-//   const quantity = parseInt(req.body.quantity);
-//   const pickupID = parseInt(req.body.pickupID);
+  console.log("current orderID:", orderID);
+  console.log("current quantity:", quantity);
+  console.log("current pickupID:", pickupID);
 
-//   console.log("current orderID:", orderID);
-//   console.log("current quantity:", quantity);
-//   console.log("current pickupID:", pickupID);
+  const currentPickup = await myDB.getPickupType(pickupID);
+  await myDB.updateOrder(req.user.id, orderID, quantity, currentPickup);
 
-//   const currentPickup = await myDB.getPickupByID(pickupID);
-//   await myDB.updateOrder(orderID, quantity, currentPickup);
+  console.log("Order updated");
+  res.redirect("/user/orders/");
+});
 
-//   console.log("Order updated");
-//   res.redirect("/user/orders/");
-// });
+/* POST delete order. */
+router.post("/user/orders/delete/", async function (req, res, next) {
+  console.log("Got post delete order");
 
-// /* POST delete order. */
-// router.post("/user/orders/delete/", async function (req, res, next) {
-//   console.log("Got post delete order");
+  const orderID = req.body.orderID;
 
-//   const orderID = req.body.orderID;
+  console.log("got delete order", orderID);
 
-//   console.log("got delete order", orderID);
+  await myDB.deleteOrder(req.user.id, orderID);
 
-//   await myDB.deleteOrder(orderID);
+  console.log("Order deleted");
 
-//   console.log("Order deleted");
-
-//   res.redirect("/user/orders/");
-// });
+  res.redirect("/user/orders/");
+});
 
 // /* ------Jiayi----- */
 // /* GET admin page. */

@@ -239,6 +239,45 @@ async function getOrder(userId, orderId) {
   }
 }
 
+async function updateOrder(userID, orderID, quantity, currentPickup) {
+  let clientRedis;
+  try {
+    clientRedis = await getConnection();
+    return await clientRedis.sendCommand([
+      "HSET",
+      `orders:customer:${userID}:current_order:${orderID}`,
+      "pickup_id",
+      `${currentPickup.id.toString()}`,
+      "pickup_type",
+      `${currentPickup.type}`,
+      "order_quantity",
+      `${quantity.toString()}`,
+    ]);
+  } finally {
+    clientRedis.quit();
+  }
+}
+
+async function deleteOrder(userID, orderID) {
+  let clientRedis;
+  try {
+    clientRedis = await getConnection();
+    //remove from the list of current orders
+    return await clientRedis.sendCommand([
+      "SREM",
+      `orders:customer:${userID.toString()}:current_orders`,
+      `${orderID.toString()}`,
+    ]);
+
+    return await clientRedis.sendCommand([
+      "DEL",
+      `orders:customer:${userID}:current_order:${orderID.toString()}`,
+    ]);
+  } finally {
+    clientRedis.quit();
+  }
+}
+
 module.exports = {
   getUser,
   getBrand,
@@ -252,6 +291,8 @@ module.exports = {
   createOrder,
   getOrdersBy,
   getOrder,
+  updateOrder,
+  deleteOrder,
 };
 
 //useful documentation
