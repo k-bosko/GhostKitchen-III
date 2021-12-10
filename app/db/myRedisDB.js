@@ -113,7 +113,6 @@ async function getLocation(locId) {
 }
 
 async function getPickupTypes() {
-  console.log("DB request for pickup types");
   let clientRedis;
   try {
     clientRedis = await getConnection();
@@ -142,6 +141,104 @@ async function getPickupType(typeId) {
     clientRedis.quit();
   }
 }
+
+async function createOrder(
+  orderQuantity,
+  currentPickup,
+  currentLocation,
+  currentMeal,
+  userID
+) {
+  let clientRedis;
+  try {
+    clientRedis = await getConnection();
+
+    const nextId = await clientRedis.incr("orderCount");
+    console.log(`nextId ${nextId}`);
+
+    // await clientRedis.hSet(`order:${nextId}`, { user: user, text: text });
+    console.log(`order ${nextId} added`);
+
+    await clientRedis.SADD(
+      `orders:customer:${userID}:current_orders`,
+      `${nextId}`
+    );
+
+    const time_ordered = new Date(Date.now());
+
+    await clientRedis.sendCommand([
+      "HSET",
+      `orders:customer:${userID}:current_order:${nextId}`,
+      "id",
+      `${nextId}`,
+      "customer_id",
+      `${userID}`,
+      "location_id",
+      `${currentLocation.id.toString()}`,
+      "location_address",
+      `${currentLocation.address}`,
+      "location_state",
+      `${currentLocation.state}`,
+      "location_phone",
+      `${currentLocation.phone_number}`,
+      "meal_id",
+      `${currentMeal.meal_id.toString()}`, //TODO is not the same as meal_id above!!! see if I need this information
+      "meal_name",
+      `${currentMeal.meal_name}`,
+      "meal_desc",
+      `${currentMeal.meal_desc}`,
+      "meal_price",
+      `${currentMeal.price}`,
+      "order_time",
+      time_ordered.toLocaleString(),
+      "pickup_id",
+      `${currentPickup.id.toString()}`,
+      "pickup_type",
+      `${currentPickup.type}`,
+      "pickup_time",
+      "null",
+      "order_quantity",
+      `${orderQuantity.toString()}`,
+    ]);
+  } finally {
+    await clientRedis.quit();
+  }
+}
+
+async function getOrdersBy(userId) {
+  let clientRedis;
+  try {
+    clientRedis = await getConnection();
+    const currentOrdersIds = await clientRedis.SMEMBERS(
+      `orders:customer:${userId}:current_orders`
+    );
+
+    console.log("got current orders", currentOrdersIds);
+
+    const ordersList = [];
+    for (let orderId of currentOrdersIds) {
+      const order = await getOrder(userId, orderId);
+      ordersList.push(order);
+    }
+
+    return ordersList;
+  } finally {
+    clientRedis.quit();
+  }
+}
+
+async function getOrder(userId, orderId) {
+  let clientRedis;
+  try {
+    clientRedis = await getConnection();
+    return await clientRedis.HGETALL(
+      `orders:customer:${userId}:current_order:${orderId}`
+    );
+  } finally {
+    clientRedis.quit();
+  }
+}
+
 module.exports = {
   getUser,
   getBrand,
@@ -152,6 +249,9 @@ module.exports = {
   getLocation,
   getPickupType,
   getPickupTypes,
+  createOrder,
+  getOrdersBy,
+  getOrder,
 };
 
 //useful documentation

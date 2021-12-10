@@ -75,52 +75,54 @@ router.get(
   }
 );
 
-// // /* POST order page. */
-// router.post(
-//   "/user/brands/:brandID/menu/order/create/",
-//   async function (req, res, next) {
-//     console.log("Got POST to create order");
-//     const userID = req.user.id;
-//     const orderQuantity = req.body.quantity;
-//     const pickupID = parseInt(req.body.pickup_id);
-//     const locationID = parseInt(req.body.location_id);
-//     const mealID = req.body.meal_id;
+/* POST order page. */
+router.post(
+  "/user/brands/:brandID/menu/order/create/",
+  async function (req, res, next) {
+    console.log("Got POST to create order");
+    const userID = req.user.id;
+    const orderQuantity = req.body.quantity;
+    const pickupID = parseInt(req.body.pickup_id);
+    const locationID = parseInt(req.body.location_id);
+    const mealID = req.body.meal_id;
+    const brandID = req.params.brandID;
 
-//     const currentPickup = await myDB.getPickupByID(pickupID);
-//     const currentLocation = await myDB.getLocationByID(locationID);
-//     const currentMeal = await myDB.getMealByMealID(mealID);
+    const currentPickup = await myDB.getPickupType(pickupID);
+    const currentLocation = await myDB.getLocation(locationID);
+    const currentMeal = await myDB.getMeal(brandID, mealID);
 
-//     console.log("got order quantity", orderQuantity);
-//     console.log("got pickup", currentPickup);
-//     console.log("got location", currentLocation);
-//     console.log("got meal", currentMeal);
+    console.log("got order quantity", orderQuantity);
+    console.log("got pickup", currentPickup);
+    console.log("got location", currentLocation);
+    console.log("got meal", currentMeal);
 
-//     await myDB.createOrder(
-//       orderQuantity,
-//       currentPickup,
-//       currentLocation,
-//       currentMeal,
-//       userID
-//     );
-//     console.log("Order created");
+    await myDB.createOrder(
+      orderQuantity,
+      currentPickup,
+      currentLocation,
+      currentMeal,
+      userID
+    );
+    console.log("Order created");
 
-//     res.redirect("/user/confirmation/");
-//   }
-// );
+    res.redirect("/user/confirmation/");
+  }
+);
 
-// /* GET confirmation page. */
-// router.get("/user/confirmation/", async function (req, res, next) {
-//   res.render("confirmation");
-// });
+/* GET confirmation page. */
+router.get("/user/confirmation/", async function (req, res, next) {
+  res.render("confirmation");
+});
 
-// /* GET orders page. */
-// router.get("/user/orders/", async function (req, res, next) {
-//   console.log("Got GET orders request");
-//   const user = req.user;
-//   const orders = await myDB.getOrdersBy(user.id);
-//   console.log("got orders", orders);
-//   res.render("currentOrders", { orders: orders });
-// });
+/* GET orders page. */
+router.get("/user/orders/", async function (req, res, next) {
+  console.log("Got GET orders request");
+  const userId = req.user.id;
+  const orders = await myDB.getOrdersBy(userId);
+  console.log("got orders", orders);
+
+  res.render("currentOrders", { orders: orders });
+});
 
 // /* GET update order page. */
 // router.get("/user/orders/:orderID/", async function (req, res, next) {

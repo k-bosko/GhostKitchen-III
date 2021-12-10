@@ -13,6 +13,7 @@ const meals = readFile("./db/seed/Meals.json");
 const locations = readFile("./db/seed/Locations.json");
 const customers = readFile("./db/seed/Customers.json");
 const pickup_types = readFile("./db/seed/Pickup_Type.json");
+const orders = readFile("./db/seed/Orders.json");
 
 async function prepopulateRedis() {
   let clientRedis;
@@ -24,7 +25,11 @@ async function prepopulateRedis() {
     await clientRedis.connect();
     console.log("Redis connected");
 
+    //delete existing db from memory, otherwise will keep counting/adding if rerun the script
+    await clientRedis.sendCommand(["FLUSHALL"]);
     let brandsIds = {};
+    let mealIDs = [];
+    let orderID;
 
     console.log("parsing meals");
     for (const meal of meals) {
@@ -34,20 +39,27 @@ async function prepopulateRedis() {
 
       brandsIds[`${meal.brand_id}`] = meal.brand_name;
 
+      //counter for meal ids -> we need new one bc we will be updating/deleting this field
+      //and ids from older db might not be sequential
+      mealIDs.push(meal.meal_id);
+
+      // await clientRedis.SADD(`brand:${meal.brand_id}:meals`, mealID.toString());
       await clientRedis.SADD(
         `brand:${meal.brand_id}:meals`,
-        meal.meal_id.toString()
+        `${meal.meal_id.toString()}`
       );
 
       //important - use toString() for integer values, otherwise WRONGTYPE error
       await clientRedis.sendCommand([
         "HSET",
+        // `brand:${meal.brand_id.toString()}:meal:${mealID.toString()}`,
         `brand:${meal.brand_id.toString()}:meal:${meal.meal_id.toString()}`,
         "brand_id",
         `${meal.brand_id.toString()}`,
         "brand_name",
         `${meal.brand_name}`,
         "meal_id",
+        // mealID.toString(),
         `${meal.meal_id.toString()}`,
         "meal_name",
         `${meal.meal_name}`,
@@ -59,6 +71,8 @@ async function prepopulateRedis() {
         `${meal.price.toString()}`,
       ]);
     }
+
+    await await clientRedis.SET("mealCount", Math.max(mealIDs).toString());
 
     console.log("parsing brands");
 
@@ -130,6 +144,55 @@ async function prepopulateRedis() {
         "type",
         `${pickup_type.type}`,
       ]);
+    }
+
+    console.log("parsing orders");
+    for (const order of orders) {
+      orderID = await clientRedis.INCR("orderCount");
+      // console.log("order - ", orderID);
+
+      if (order.pickup_time === null) {
+        console.log(`got current order for customer #${order.customer_id}`);
+        await clientRedis.sendCommand([
+          "SADD",
+          `orders:customer:${order.customer_id.toString()}:current_orders`,
+          `${orderID.toString()}`,
+        ]);
+        await clientRedis.sendCommand([
+          "HSET",
+          `orders:customer:${order.customer_id.toString()}:current_order:${orderID.toString()}`,
+          "id",
+          `${orderID.toString()}`,
+          "customer_id",
+          `${order.customer_id.toString()}`,
+          "location_id",
+          `${order.location.id.toString()}`,
+          "location_address",
+          `${order.location.address}`,
+          "location_state",
+          `${order.location.state}`,
+          "location_phone",
+          `${order.location.phone_number}`,
+          "meal_id",
+          `${order.meal_info.id.toString()}`, //TODO is not the same as meal_id above!!! see if I need this information
+          "meal_name",
+          `${order.meal_info.name}`,
+          "meal_desc",
+          `${order.meal_info.desc}`,
+          "meal_price",
+          `${order.meal_info.price}`,
+          "order_time",
+          `${order.order_time}`,
+          "pickup_id",
+          `${order.pickup.id.toString()}`,
+          "pickup_type",
+          `${order.pickup.type}`,
+          "pickup_time",
+          `${order.pickup_time}`,
+          "order_quantity",
+          `${order.order_quantity.toString()}`,
+        ]);
+      }
     }
   } finally {
     // Ensures that the client will close when you finish/error
