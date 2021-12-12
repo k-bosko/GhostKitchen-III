@@ -182,11 +182,11 @@ router.get("/user/orders/", async function (req, res, next) {
 //   res.redirect("/user/orders/");
 // });
 
-// /* ------Jiayi----- */
-// /* GET admin page. */
-// router.get("/admin", async function (req, res, next) {
-//   res.render("admin");
-// });
+/* ------Jiayi----- */
+/* GET admin page. */
+router.get("/admin", async function (req, res, next) {
+  res.render("admin");
+});
 
 // /* GET admin (orders) page. */
 // router.get("/admin/orders", async function (req, res, next) {
@@ -207,32 +207,32 @@ router.get("/user/orders/", async function (req, res, next) {
 //   res.redirect("/admin/orders");
 // });
 
-// /* GET Admin (brands) page. */
-// router.get("/admin/brands", async function (req, res, next) {
-//   console.log("Got GET request for brands");
+/* GET Admin (brands) page. */
+router.get("/admin/brands", async function (req, res, next) {
+  console.log("Got GET request for brands");
 
-//   const brands = await myDB.getBrands();
+  const brands = await myDB.getBrands();
 
-//   console.log("got brands", brands);
+  console.log("got brands", brands);
 
-//   //render the _adminBrands_ template with the brands attribute as brands (from DB)
-//   res.render("adminBrands", { brands: brands });
-// });
+  //render the _adminBrands_ template with the brands attribute as brands (from DB)
+  res.render("adminBrands", { brands: brands });
+});
 
-// /*GET Admin (meals) page. */
-// router.get("/admin/brands/:brandID/meals/", async function (req, res, next) {
-//   //params come with GET, brandID is in params
-//   console.log("Got request for meals page.");
-//   console.log(req.params);
-//   const brandID = req.params.brandID;
-//   console.log(`brandId is ${brandID}`);
+/*GET Admin (meals) page. */
+router.get("/admin/brands/:brandID/meals/", async function (req, res, next) {
+  //params come with GET, brandID is in params
+  console.log("Got request for meals page.");
+  console.log(req.params);
+  const brandID = req.params.brandID;
+  console.log(`brandId is ${brandID}`);
 
-//   const meals = await myDB.getMealsBy(brandID);
-//   const brands = await myDB.getBrandsBy(brandID);
-//   console.log(brands);
-//   //render the _adminMeals_ template with the meals attribute as meals (from DB)
-//   res.render("adminMeals", { meals: meals, brands: brands });
-// });
+  const meals = await myDB.getMealsBy(brandID);
+  const brands = await myDB.getBrand(brandID);
+  console.log(brands);
+  //render the _adminMeals_ template with the meals attribute as meals (from DB)
+  res.render("adminMeals", { meals: meals, brands: brands });
+});
 
 // /*POST create meals. */
 // router.post("/admin/meals/create", async function (req, res, next) {

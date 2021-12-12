@@ -20,7 +20,7 @@
               </div>
             <div class="row p-4">
                 <div class="col-8 p-4">
-                    <div class="display-4">Menu for <%= brands[0].brand_name %></div>
+                    <div class="display-4">Menu for <%= brands.brand_name %></div>
                     <table class="table table-hover">
                         <thead>
                             <tr>
@@ -47,8 +47,7 @@
                                         $<%= f.price %>
                                     </td>
                                     <td>
-                                        <form action="/admin/brands/<%= brands[0].brand_id %>/meals/<%= f._id %>" method="GET">
-                                            <!-- <input type="hidden" name="brandID" value="<%= brands[0].brand_id %>"> -->
+                                        <form action="/admin/brands/<%= brands.brand_id %>/meals/<%= f.meal_id %>" method="GET">
                                         
                                             <button type="submit" class="btn btn-primary">
                                                 UPDATE
@@ -57,8 +56,8 @@
                                     </td>
                                     <td>
                                         <form action="/admin/meals/delete" method="POST">
-                                            <input type="hidden" name="brandID" value="<%= brands[0].brand_id %>">
-                                            <input type="hidden" name="mealID" value="<%= f._id %>">
+                                            <input type="hidden" name="brandID" value="<%= brands.brand_id %>">
+                                            <input type="hidden" name="mealID" value="<%= f.meal_id %>">
                                             <button type="submit" class="btn btn-danger">
                                                 DELETE
                                             </button>
@@ -74,8 +73,8 @@
                     <div class="display-4">Create Meal</div>
                     <br/>
                     <form action="/admin/meals/create" method="POST">
-                        <input type="hidden" name="brandID" value="<%= brands[0].brand_id %>">
-                        <input type="hidden" name="brand_name" value="<%= brands[0].brand_name %>">
+                        <input type="hidden" name="brandID" value="<%= brands.brand_id %>">
+                        <input type="hidden" name="brand_name" value="<%= brands.brand_name %>">
                         <div style="font-weight: bold;">
                             <label class="form-label">
                                 Meal Name:
