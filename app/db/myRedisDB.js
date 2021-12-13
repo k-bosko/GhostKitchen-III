@@ -239,6 +239,46 @@ async function getOrder(userId, orderId) {
   }
 }
 
+async function updateOrder(userID, orderID, quantity, currentPickup) {
+  let clientRedis;
+  try {
+    clientRedis = await getConnection();
+    return await clientRedis.sendCommand([
+      "HSET",
+      `orders:customer:${userID}:current_order:${orderID}`,
+      "pickup_id",
+      `${currentPickup.id.toString()}`,
+      "pickup_type",
+      `${currentPickup.type}`,
+      "order_quantity",
+      `${quantity.toString()}`,
+    ]);
+  } finally {
+    clientRedis.quit();
+  }
+}
+
+async function deleteOrder(userID, orderID) {
+  let clientRedis;
+  try {
+    clientRedis = await getConnection();
+    //remove from the list of current orders
+    return await clientRedis.sendCommand([
+      "SREM",
+      `orders:customer:${userID.toString()}:current_orders`,
+      `${orderID.toString()}`,
+    ]);
+
+    return await clientRedis.sendCommand([
+      "DEL",
+      `orders:customer:${userID}:current_order:${orderID.toString()}`,
+    ]);
+  } finally {
+    clientRedis.quit();
+  }
+}
+
+
 //Jiayi
 
 async function createMeal(meal, brand_name, brandID) {
@@ -279,18 +319,26 @@ async function createMeal(meal, brand_name, brandID) {
   }
 }
 
-// async function deleteMeal(mealIDtoDelete) {
-//   let clientRedis;
-//   try {
-//     clientRedis = await getRConnection();
+async function deleteMeal(brandIDtoDelete, mealIDtoDelete) {
+  let clientRedis;
+  try {
+    clientRedis = await getConnection();
+    //remove from the list of current orders
+    return await clientRedis.sendCommand([
+      "SREM",
+      `brand:${brandIDtoDelete.toString()}:meals`,
+      `${mealIDtoDelete.toString()}`,
+    ]);
 
-//     const key = `tweet:${tweetId}`;
-//     await clientRedis.lRem("tweets", 0, key);
-//     await clientRedis.del(key);
-//   } finally {
-//     rclient.quit();
-//   }
-// }
+    return await clientRedis.sendCommand([
+      "DEL",
+      `brand:${brandIDtoDelete.toString()}:meal:${mealIDtoDelete.toString()}`,
+    ]);
+  } finally {
+    clientRedis.quit();
+  }
+}
+
 async function getAllCurrentOrders() {
   let clientRedis;
   try {
@@ -341,6 +389,26 @@ async function updatePickupTime(orderID) {
   }
 }
 
+async function deleteCurrentOrder(orderID) {
+  let clientRedis;
+  try {
+    clientRedis = await getConnection();
+    //remove from the list of current orders
+    return await clientRedis.sendCommand([
+      "SREM",
+      `orders:current_orders`,
+      `${orderID.toString()}`,
+    ]);
+
+    return await clientRedis.sendCommand([
+      "DEL",
+      `orders:current_order:${orderID.toString()}`,
+    ]);
+  } finally {
+    clientRedis.quit();
+  }
+}
+
 
 module.exports = {
   getUser,
@@ -355,10 +423,14 @@ module.exports = {
   createOrder,
   getOrdersBy,
   getOrder,
+  updateOrder,
+  deleteOrder,
   createMeal,
+  deleteMeal,
   getAllCurrentOrders,
   getAllCurrentOrder,
-  updatePickupTime
+  updatePickupTime,
+  deleteCurrentOrder
 };
 
 //useful documentation

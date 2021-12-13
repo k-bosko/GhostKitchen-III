@@ -26,18 +26,18 @@
                 <div class="col-4">
                     <form action="/user/orders/update/" method="POST">
                         <div class="display-6 text-capitalize">
-                            <%= orderDetails.meal_info.name %>
+                            <%= orderDetails.meal_name %>
                         </div>
                         <br />
                         <div class="lead">
-                            <%= orderDetails.meal_info.desc %>
+                            <%= orderDetails.meal_desc %>
                         </div>
                         <br />
                         <div>
                             <label for="pickup-select" style="font-weight: bold;">Quantity</label>
                             <select class="form-control" id="quantity-select" name="quantity">
                                 <% for (let i=1; i<=20; i++) {%>
-                                    <option value="<%= i %>" <% if(i===orderDetails.order_quantity) { %> selected <% } %>>
+                                    <option value="<%= i %>" <% if(i=== parseInt(orderDetails.order_quantity)) { %> selected <% } %>>
                                             <%= i %>
                                     </option>
                                     <% } %>
@@ -48,7 +48,7 @@
                             <label for="pickup-select" style="font-weight: bold;">Pickup Type</label>
                             <select class="form-control" id="pickup-select" name="pickupID">
                                 <% for (const f of pickups) {%>
-                                    <option value="<%= f.id %>" <% if(f.id===orderDetails.pickup.id) { %> selected <% }
+                                    <option value="<%= f.id %>" <% if(f.id===orderDetails.pickup_id) { %> selected <% }
                                             %>>
                                             <%= f.type %>
                                     </option>
@@ -57,7 +57,7 @@
                         </div>
                         <br />
                         <button type="submit" class="btn btn-primary" style="width: 100%;" name="orderID"
-                            value="<%= orderDetails._id %>">Update
+                            value="<%= orderDetails.id %>">Update
                         </button>
                     </form>
                 </div>
