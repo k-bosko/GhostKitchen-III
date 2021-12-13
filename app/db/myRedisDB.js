@@ -339,6 +339,33 @@ async function deleteMeal(brandIDtoDelete, mealIDtoDelete) {
   }
 }
 
+async function updateMeal(mealID, brandID, brand_name, meal_name, meal_desc, calories, price) {
+  let clientRedis;
+  try {
+    clientRedis = await getConnection();
+    return await clientRedis.sendCommand([
+      "HSET",
+      `brand:${brandID.toString()}:meal:${mealID.toString()}`,
+      "brand_id",
+      `${brandID.toString()}`,
+      "brand_name",
+      `${brand_name}`,
+      "meal_id",
+      `${mealID.toString()}`,
+      "meal_name",
+      `${meal_name}`,
+      "meal_desc",
+      `${meal_desc}`,
+      "calories",
+      `${calories.toString()}`,
+      "price",
+      `${price}`,
+    ]);
+  } finally {
+    clientRedis.quit();
+  }
+}
+
 async function getAllCurrentOrders() {
   let clientRedis;
   try {
@@ -409,6 +436,28 @@ async function deleteCurrentOrder(orderID) {
   }
 }
 
+async function getBrandById(brandID) {
+  let clientRedis;
+  try {
+    clientRedis = await getConnection();
+    const brand = await clientRedis.HGETALL(`brand:${brandID}`);
+    return brand;
+  } finally {
+    clientRedis.quit();
+  }
+}
+
+async function getMealById(brandId, mealId) {
+  let clientRedis;
+  try {
+    clientRedis = await getConnection();
+    const meal = await clientRedis.HGETALL(`brand:${brandId}:meal:${mealId}`);
+    return meal;
+  } finally {
+    clientRedis.quit();
+  }
+}
+
 
 module.exports = {
   getUser,
@@ -427,10 +476,13 @@ module.exports = {
   deleteOrder,
   createMeal,
   deleteMeal,
+  updateMeal,
   getAllCurrentOrders,
   getAllCurrentOrder,
   updatePickupTime,
-  deleteCurrentOrder
+  deleteCurrentOrder,
+  getBrandById,
+  getMealById
 };
 
 //useful documentation

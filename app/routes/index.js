@@ -227,7 +227,7 @@ router.get("/admin/brands/:brandID/meals/", async function (req, res, next) {
   console.log(`brandId is ${brandID}`);
 
   const meals = await myDB.getMealsBy(brandID);
-  const brands = await myDB.getBrand(brandID);
+  const brands = await myDB.getBrandById(brandID);
   console.log(brands);
   //render the _adminMeals_ template with the meals attribute as meals (from DB)
   res.render("adminMeals", { meals: meals, brands: brands });
@@ -267,47 +267,48 @@ router.post("/admin/meals/delete", async function (req, res) {
   res.redirect(`/admin/brands/${brandIDtoDelete}/meals`);
 });
 
-// /* GET update adminMeals page. */
-// router.get(
-//   "/admin/brands/:brandID/meals/:mealID",
-//   async function (req, res, next) {
-//     console.log("Got adminMeals update");
+/* GET update adminMeals page. */
+router.get(
+  "/admin/brands/:brandID/meals/:mealID",
+  async function (req, res, next) {
+    console.log("Got adminMeals update");
 
-//     const mealID = req.params.mealID;
-//     const brandID = req.params.brandID;
+    const mealID = req.params.mealID;
+    const brandID = req.params.brandID;
 
-//     console.log("got meal details", mealID);
-//     console.log(req.body);
-//     console.log("got brandID", brandID);
-//     const mealDetails = await myDB.getMealByMealID(mealID);
+    console.log("got meal details", mealID);
+    console.log(req.body);
+    console.log("got brandID", brandID);
+    const mealDetails = await myDB.getMealById(brandID, mealID);
 
-//     console.log("meal details", mealDetails);
-//     res.render("mealUpdate", {
-//       mealDetails: mealDetails,
-//       brandID: brandID,
-//     });
-//   }
-// );
+    console.log("meal details", mealDetails);
+    res.render("mealUpdate", {
+      mealDetails: mealDetails,
+      brandID: brandID,
+    });
+  }
+);
 
-// /* POST update adminMeals page. */
-// router.post("/admin/meals/update/", async function (req, res, next) {
-//   console.log("got update POST request");
-//   console.log(req.body);
+/* POST update adminMeals page. */
+router.post("/admin/meals/update/", async function (req, res, next) {
+  console.log("got update POST request");
+  console.log(req.body);
 
-//   const mealID = req.body.mealID;
+  const mealID = parseInt(req.body.mealID);
 
-//   const brandID = req.body.brandID;
-//   const meal_name = req.body.meal_name;
-//   const meal_desc = req.body.description;
-//   const calories = req.body.calories;
-//   const price = req.body.price;
-//   console.log(meal_desc);
+  const brandID = parseInt(req.body.brandID);
+  const meal_name = req.body.meal_name;
+  const meal_desc = req.body.description;
+  const calories = req.body.calories;
+  const price = req.body.price;
+  console.log(`meal ID: ${mealID}`);
+  const brand = await myDB.getBrandById(brandID);
+  console.log(brand);
+  await myDB.updateMeal(mealID, brandID, brand.brand_name, meal_name, meal_desc, calories, price);
 
-//   await myDB.updateMeal(mealID, brandID, meal_name, meal_desc, calories, price);
-
-//   console.log(`Meal updated`);
-//   res.redirect(`/admin/brands/${brandID}/meals`);
-// });
-// // /* -------Jiayi-------*/
+  console.log(`Meal updated`);
+  res.redirect(`/admin/brands/${brandID}/meals`);
+});
+// /* -------Jiayi-------*/
 
 module.exports = router;
