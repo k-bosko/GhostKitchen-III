@@ -188,13 +188,13 @@ router.get("/admin", async function (req, res, next) {
   res.render("admin");
 });
 
-// /* GET admin (orders) page. */
-// router.get("/admin/orders", async function (req, res, next) {
-//   console.log("GOT get request for order page");
-//   const orders = await myDB.getAllCurrentOrders();
-//   console.log("got orders", orders);
-//   res.render("adminOrders", { orders: orders });
-// });
+/* GET admin (orders) page. */
+router.get("/admin/orders", async function (req, res, next) {
+  console.log("GOT get request for order page");
+  const orders = await myDB.getAllCurrentOrders();
+  console.log("got orders", orders);
+  res.render("adminOrders", { orders: orders });
+});
 
 // /* POST admin (orders) page. */
 // router.post("/admin/orders/update", async function (req, res, next) {
@@ -234,39 +234,39 @@ router.get("/admin/brands/:brandID/meals/", async function (req, res, next) {
   res.render("adminMeals", { meals: meals, brands: brands });
 });
 
-// /*POST create meals. */
-// router.post("/admin/meals/create", async function (req, res, next) {
-//   console.log("Got post create/meal");
-//   console.log(req.body);
-//   const meal = req.body;
-//   const brand_name = req.body.brand_name;
-//   const brandID = req.body.brandID;
-//   console.log(`expect${brandID}`);
-//   console.log("got create meal", meal);
+/*POST create meals. */
+router.post("/admin/meals/create", async function (req, res, next) {
+  console.log("Got post create/meal");
+  console.log(req.body);
+  const meal = req.body;
+  const brand_name = req.body.brand_name;
+  const brandID = req.body.brandID;
+  console.log(`expect${brandID}`);
+  console.log("got create meal", meal);
 
-//   await myDB.createMeal(meal, brand_name, brandID);
+  await myDB.createMeal(meal, brand_name, brandID);
 
-//   console.log("Meal created");
+  console.log("Meal created");
 
-//   res.redirect(`/admin/brands/${brandID}/meals`);
-// });
+  res.redirect(`/admin/brands/${brandID}/meals`);
+});
 
-// /* POST delete meal. */
-// router.post("/admin/meals/delete", async function (req, res) {
-//   console.log("Got post delete meal");
+/* POST delete meal. */
+router.post("/admin/meals/delete", async function (req, res) {
+  console.log("Got post delete meal");
 
-//   const brandIDtoDelete = req.body.brandID;
-//   const mealIDtoDelete = req.body.mealID;
+  const brandIDtoDelete = req.body.brandID;
+  const mealIDtoDelete = req.body.mealID;
 
-//   console.log(`will delete brandID: ${brandIDtoDelete}`);
-//   console.log(`will delete mealID: ${mealIDtoDelete}`);
+  console.log(`will delete brandID: ${brandIDtoDelete}`);
+  console.log(`will delete mealID: ${mealIDtoDelete}`);
 
-//   await myDB.deleteMeal(mealIDtoDelete);
+  await myDB.deleteMeal(mealIDtoDelete);
 
-//   console.log("Meal deleted");
+  console.log("Meal deleted");
 
-//   res.redirect(`/admin/brands/${brandIDtoDelete}/meals`);
-// });
+  res.redirect(`/admin/brands/${brandIDtoDelete}/meals`);
+});
 
 // /* GET update adminMeals page. */
 // router.get(

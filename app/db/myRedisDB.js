@@ -239,6 +239,80 @@ async function getOrder(userId, orderId) {
   }
 }
 
+//Jiayi
+
+async function createMeal(meal, brand_name, brandID) {
+  let clientRedis;
+  try {
+    clientRedis = await getConnection();
+
+    const nextId = await clientRedis.incr("mealCount");
+    console.log(`nextId ${nextId}`);
+
+    // await clientRedis.hSet(`order:${nextId}`, { user: user, text: text });
+    console.log(`meal${nextId} added`);
+
+    await clientRedis.SADD(
+      `brand:${brandID}:meals`,
+      `${nextId.toString()}`
+    );
+    await clientRedis.sendCommand([
+      "HSET",
+      `brand:${brandID.toString()}:meal:${nextId.toString()}`,
+      "brand_id",
+      `${brandID.toString()}`,
+      "brand_name",
+      `${brand_name}`,
+      "meal_id",
+      `${nextId.toString()}`,
+      "meal_name",
+      `${meal.meal_name}`,
+      "meal_desc",
+      `${meal.meal_desc}`,
+      "calories",
+      `${meal.calories.toString()}`,
+      "price",
+      `${meal.price.toString()}`
+    ]);
+  } finally {
+    await clientRedis.quit();
+  }
+}
+
+// async function getAllCurrentOrders() {
+//   let clientRedis;
+//   try {
+//     clientRedis = await getConnection();
+//     const currentOrdersIds = await clientRedis.SMEMBERS(
+//       `orders:customer:${userId}:current_orders`
+//     );
+
+//     console.log("got current orders", currentOrdersIds);
+
+//     const ordersList = [];
+//     for (let orderId of currentOrdersIds) {
+//       const order = await getOrder(userId, orderId);
+//       ordersList.push(order);
+//     }
+
+//     return ordersList;
+//   } finally {
+//     clientRedis.quit();
+//   }
+// }
+
+// async function getAllCurrentOrder(userId, orderId) {
+//   let clientRedis;
+//   try {
+//     clientRedis = await getConnection();
+//     return await clientRedis.HGETALL(
+//       `orders:customer:${userId}:current_order:${orderId}`
+//     );
+//   } finally {
+//     clientRedis.quit();
+//   }
+// }
+
 module.exports = {
   getUser,
   getBrand,
@@ -252,6 +326,7 @@ module.exports = {
   createOrder,
   getOrdersBy,
   getOrder,
+  createMeal
 };
 
 //useful documentation
