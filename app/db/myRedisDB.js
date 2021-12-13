@@ -325,6 +325,23 @@ async function getAllCurrentOrder(orderId) {
   }
 }
 
+async function updatePickupTime(orderID) {
+  let clientRedis;
+  try {
+    clientRedis = await getConnection();
+    const pickup_time = new Date(Date.now());
+    return await clientRedis.sendCommand([
+      "HSET",
+      `orders:current_order:${orderID}`,
+      "pickup_time",
+      `${pickup_time.toString()}`
+    ]);
+  } finally {
+    clientRedis.quit();
+  }
+}
+
+
 module.exports = {
   getUser,
   getBrand,
@@ -340,7 +357,8 @@ module.exports = {
   getOrder,
   createMeal,
   getAllCurrentOrders,
-  getAllCurrentOrder
+  getAllCurrentOrder,
+  updatePickupTime
 };
 
 //useful documentation

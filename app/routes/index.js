@@ -196,16 +196,15 @@ router.get("/admin/orders", async function (req, res, next) {
   res.render("adminOrders", { orders: orders });
 });
 
-// /* POST admin (orders) page. */
-// router.post("/admin/orders/update", async function (req, res, next) {
-//   console.log("GOT post request for update pickup time");
-//   const orderID = req.body.orderID;
-//   console.log(orderID);
-//   await myDB.updatePickupTime(orderID);
-
-//   console.log("pickup time updated");
-//   res.redirect("/admin/orders");
-// });
+/* POST admin (orders) page. */
+router.post("/admin/orders/update", async function (req, res, next) {
+  console.log("GOT post request for update pickup time");
+  const orderID = req.body.orderID;
+  console.log(orderID);
+  await myDB.updatePickupTime(orderID);
+  console.log("pickup time updated");
+  res.redirect("/admin/orders");
+});
 
 /* GET Admin (brands) page. */
 router.get("/admin/brands", async function (req, res, next) {
