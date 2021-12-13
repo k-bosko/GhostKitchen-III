@@ -220,7 +220,7 @@ async function getOrdersBy(userId) {
       const order = await getOrder(userId, orderId);
       ordersList.push(order);
     }
-
+  
     return ordersList;
   } finally {
     clientRedis.quit();
@@ -279,39 +279,51 @@ async function createMeal(meal, brand_name, brandID) {
   }
 }
 
-// async function getAllCurrentOrders() {
+// async function deleteMeal(mealIDtoDelete) {
 //   let clientRedis;
 //   try {
-//     clientRedis = await getConnection();
-//     const currentOrdersIds = await clientRedis.SMEMBERS(
-//       `orders:customer:${userId}:current_orders`
-//     );
+//     clientRedis = await getRConnection();
 
-//     console.log("got current orders", currentOrdersIds);
-
-//     const ordersList = [];
-//     for (let orderId of currentOrdersIds) {
-//       const order = await getOrder(userId, orderId);
-//       ordersList.push(order);
-//     }
-
-//     return ordersList;
+//     const key = `tweet:${tweetId}`;
+//     await clientRedis.lRem("tweets", 0, key);
+//     await clientRedis.del(key);
 //   } finally {
-//     clientRedis.quit();
+//     rclient.quit();
 //   }
 // }
+async function getAllCurrentOrders() {
+  let clientRedis;
+  try {
+    clientRedis = await getConnection();
+    const currentOrdersIds = await clientRedis.SMEMBERS(
+      `orders:current_orders`
+    );
 
-// async function getAllCurrentOrder(userId, orderId) {
-//   let clientRedis;
-//   try {
-//     clientRedis = await getConnection();
-//     return await clientRedis.HGETALL(
-//       `orders:customer:${userId}:current_order:${orderId}`
-//     );
-//   } finally {
-//     clientRedis.quit();
-//   }
-// }
+    console.log("got current orders", currentOrdersIds);
+
+    const ordersList = [];
+    for (let orderId of currentOrdersIds) {
+      const order = await getAllCurrentOrder(orderId);
+      ordersList.push(order);
+    }
+    //console.log(ordersList);
+    return ordersList;
+  } finally {
+    clientRedis.quit();
+  }
+}
+
+async function getAllCurrentOrder(orderId) {
+  let clientRedis;
+  try {
+    clientRedis = await getConnection();
+    return await clientRedis.HGETALL(
+      `orders:current_order:${orderId}`
+    );
+  } finally {
+    clientRedis.quit();
+  }
+}
 
 module.exports = {
   getUser,
@@ -326,7 +338,9 @@ module.exports = {
   createOrder,
   getOrdersBy,
   getOrder,
-  createMeal
+  createMeal,
+  getAllCurrentOrders,
+  getAllCurrentOrder
 };
 
 //useful documentation

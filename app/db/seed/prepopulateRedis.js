@@ -71,8 +71,8 @@ async function prepopulateRedis() {
         `${meal.price.toString()}`,
       ]);
     }
-
-    await await clientRedis.SET("mealCount", Math.max(mealIDs).toString());
+    
+    await clientRedis.SET("mealCount", Math.max(...mealIDs).toString());
 
     console.log("parsing brands");
 
@@ -159,6 +159,11 @@ async function prepopulateRedis() {
           `${orderID.toString()}`,
         ]);
         await clientRedis.sendCommand([
+          "SADD",
+          `orders:current_orders`,
+          `${orderID.toString()}`,
+        ]);
+        await clientRedis.sendCommand([
           "HSET",
           `orders:customer:${order.customer_id.toString()}:current_order:${orderID.toString()}`,
           "id",
@@ -173,6 +178,42 @@ async function prepopulateRedis() {
           `${order.location.state}`,
           "location_phone",
           `${order.location.phone_number}`,
+          "meal_id",
+          `${order.meal_info.id.toString()}`, //TODO is not the same as meal_id above!!! see if I need this information
+          "meal_name",
+          `${order.meal_info.name}`,
+          "meal_desc",
+          `${order.meal_info.desc}`,
+          "meal_price",
+          `${order.meal_info.price}`,
+          "order_time",
+          `${order.order_time}`,
+          "pickup_id",
+          `${order.pickup.id.toString()}`,
+          "pickup_type",
+          `${order.pickup.type}`,
+          "pickup_time",
+          `${order.pickup_time}`,
+          "order_quantity",
+          `${order.order_quantity.toString()}`,
+        ]);
+        await clientRedis.sendCommand([
+          "HSET",
+          `orders:current_order:${orderID.toString()}`,
+          "id",
+          `${orderID.toString()}`,
+          "customer_id",
+          `${order.customer_id.toString()}`,
+          "location_id",
+          `${order.location.id.toString()}`,
+          "location_address",
+          `${order.location.address}`,
+          "location_state",
+          `${order.location.state}`,
+          "location_phone",
+          `${order.location.phone_number}`,
+          "brand_name",
+          `${order.meal_info.brand_name}`,
           "meal_id",
           `${order.meal_info.id.toString()}`, //TODO is not the same as meal_id above!!! see if I need this information
           "meal_name",

@@ -39,16 +39,16 @@
                                     <%= f.order_id %>
                                 </td> -->
                                 <td scope="col">
-                                    <%= f.meal_info.brand_name %>
+                                    <%= f.brand_name %>
                                 </td>
                                 <td scope="col" style="text-transform:capitalize">
-                                    <%= f.meal_info.name %>
+                                    <%= f.meal_name %>
                                 </td>
                                 <td scope="col">
                                     <%= f.order_quantity %>
                                 </td>
                                 <td scope="col" style="text-transform:capitalize">
-                                    <%= f.pickup.type %>
+                                    <%= f.pickup_type %>
                                 </td>
                                 <td>
                                     <form action="/admin/orders/update" method="POST">
