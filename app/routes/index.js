@@ -90,13 +90,14 @@ router.post(
     const currentPickup = await myDB.getPickupType(pickupID);
     const currentLocation = await myDB.getLocation(locationID);
     const currentMeal = await myDB.getMeal(brandID, mealID);
-
+    const currentBrand = await myDB.getBrand(brandID);
     console.log("got order quantity", orderQuantity);
     console.log("got pickup", currentPickup);
     console.log("got location", currentLocation);
     console.log("got meal", currentMeal);
 
     await myDB.createOrder(
+      currentBrand,
       orderQuantity,
       currentPickup,
       currentLocation,
@@ -175,6 +176,7 @@ router.post("/user/orders/delete/", async function (req, res, next) {
   console.log("got delete order", orderID);
 
   await myDB.deleteOrder(req.user.id, orderID);
+  //await myDB.deleteOrderFromUserHash(req.user.id, orderID);
 
   console.log("Order deleted");
 
@@ -227,7 +229,7 @@ router.get("/admin/brands/:brandID/meals/", async function (req, res, next) {
   console.log(`brandId is ${brandID}`);
 
   const meals = await myDB.getMealsBy(brandID);
-  const brands = await myDB.getBrandById(brandID);
+  const brands = await myDB.getBrand(brandID);
   console.log(brands);
   //render the _adminMeals_ template with the meals attribute as meals (from DB)
   res.render("adminMeals", { meals: meals, brands: brands });
@@ -279,7 +281,7 @@ router.get(
     console.log("got meal details", mealID);
     console.log(req.body);
     console.log("got brandID", brandID);
-    const mealDetails = await myDB.getMealById(brandID, mealID);
+    const mealDetails = await myDB.getMeal(brandID, mealID);
 
     console.log("meal details", mealDetails);
     res.render("mealUpdate", {
@@ -302,7 +304,7 @@ router.post("/admin/meals/update/", async function (req, res, next) {
   const calories = req.body.calories;
   const price = req.body.price;
   console.log(`meal ID: ${mealID}`);
-  const brand = await myDB.getBrandById(brandID);
+  const brand = await myDB.getBrand(brandID);
   console.log(brand);
   await myDB.updateMeal(mealID, brandID, brand.brand_name, meal_name, meal_desc, calories, price);
 

@@ -143,6 +143,7 @@ async function getPickupType(typeId) {
 }
 
 async function createOrder(
+  currentBrand,
   orderQuantity,
   currentPickup,
   currentLocation,
@@ -159,13 +160,21 @@ async function createOrder(
     // await clientRedis.hSet(`order:${nextId}`, { user: user, text: text });
     console.log(`order ${nextId} added`);
 
+    //It's for User view
     await clientRedis.SADD(
       `orders:customer:${userID}:current_orders`,
       `${nextId}`
     );
+    
+    //It's for Admin view
+    await clientRedis.SADD(
+      `orders:current_orders`,
+      `${nextId}`
+    );
 
     const time_ordered = new Date(Date.now());
-
+    
+    //It's for User view
     await clientRedis.sendCommand([
       "HSET",
       `orders:customer:${userID}:current_order:${nextId}`,
@@ -181,6 +190,50 @@ async function createOrder(
       `${currentLocation.state}`,
       "location_phone",
       `${currentLocation.phone_number}`,
+      "brand_name",
+      `${currentBrand.brand_name}`,
+      "brand_id",
+      `${currentBrand.brand_id}`,
+      "meal_id",
+      `${currentMeal.meal_id.toString()}`, //TODO is not the same as meal_id above!!! see if I need this information
+      "meal_name",
+      `${currentMeal.meal_name}`,
+      "meal_desc",
+      `${currentMeal.meal_desc}`,
+      "meal_price",
+      `${currentMeal.price}`,
+      "order_time",
+      time_ordered.toLocaleString(),
+      "pickup_id",
+      `${currentPickup.id.toString()}`,
+      "pickup_type",
+      `${currentPickup.type}`,
+      "pickup_time",
+      "null",
+      "order_quantity",
+      `${orderQuantity.toString()}`,
+    ]);
+
+    //It's for Admin view
+    await clientRedis.sendCommand([
+      "HSET",
+      `orders:current_order:${nextId}`,
+      "id",
+      `${nextId}`,
+      "customer_id",
+      `${userID}`,
+      "location_id",
+      `${currentLocation.id.toString()}`,
+      "location_address",
+      `${currentLocation.address}`,
+      "location_state",
+      `${currentLocation.state}`,
+      "location_phone",
+      `${currentLocation.phone_number}`,
+      "brand_name",
+      `${currentBrand.brand_name}`,
+      "brand_id",
+      `${currentBrand.brand_id}`,
       "meal_id",
       `${currentMeal.meal_id.toString()}`, //TODO is not the same as meal_id above!!! see if I need this information
       "meal_name",
@@ -263,21 +316,35 @@ async function deleteOrder(userID, orderID) {
   try {
     clientRedis = await getConnection();
     //remove from the list of current orders
-    return await clientRedis.sendCommand([
+    //It's for the User view
+    await clientRedis.sendCommand([
       "SREM",
       `orders:customer:${userID.toString()}:current_orders`,
       `${orderID.toString()}`,
     ]);
 
-    return await clientRedis.sendCommand([
+    //It's for the Admin view
+    await clientRedis.sendCommand([
+      "SREM",
+      `orders:current_orders`,
+      `${orderID.toString()}`,
+    ]);
+
+    //It;s for the User view
+    await clientRedis.sendCommand([
       "DEL",
       `orders:customer:${userID}:current_order:${orderID.toString()}`,
+    ]);
+
+    //It's for the Admin view
+    await clientRedis.sendCommand([
+      "DEL",
+      `orders:current_order:${orderID.toString()}`,
     ]);
   } finally {
     clientRedis.quit();
   }
 }
-
 
 //Jiayi
 
@@ -421,13 +488,13 @@ async function deleteCurrentOrder(orderID) {
   try {
     clientRedis = await getConnection();
     //remove from the list of current orders
-    return await clientRedis.sendCommand([
+    await clientRedis.sendCommand([
       "SREM",
       `orders:current_orders`,
       `${orderID.toString()}`,
     ]);
 
-    return await clientRedis.sendCommand([
+    await clientRedis.sendCommand([
       "DEL",
       `orders:current_order:${orderID.toString()}`,
     ]);
@@ -435,29 +502,6 @@ async function deleteCurrentOrder(orderID) {
     clientRedis.quit();
   }
 }
-
-async function getBrandById(brandID) {
-  let clientRedis;
-  try {
-    clientRedis = await getConnection();
-    const brand = await clientRedis.HGETALL(`brand:${brandID}`);
-    return brand;
-  } finally {
-    clientRedis.quit();
-  }
-}
-
-async function getMealById(brandId, mealId) {
-  let clientRedis;
-  try {
-    clientRedis = await getConnection();
-    const meal = await clientRedis.HGETALL(`brand:${brandId}:meal:${mealId}`);
-    return meal;
-  } finally {
-    clientRedis.quit();
-  }
-}
-
 
 module.exports = {
   getUser,
@@ -481,8 +525,6 @@ module.exports = {
   getAllCurrentOrder,
   updatePickupTime,
   deleteCurrentOrder,
-  getBrandById,
-  getMealById
 };
 
 //useful documentation
