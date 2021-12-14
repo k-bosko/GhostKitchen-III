@@ -28,25 +28,25 @@ To create a MongoDB database, we went through the whole database creation cycle:
 npm install
 ```
 
-3) Start the server
+3) Start Redis server locally 
+```
+redis-server /usr/local/etc/redis.conf
+```
+
+4) Import database into your Redis local instance by running 
+
+```
+npm run prepopulate
+```
+
+5) Start the server
 
 ```
 npm start
 ```
 
-4) Point your browser to http://locahost:3000
+6) Point your browser to http://locahost:3000
 
-5) Start Redis server locally 
-```
-redis-server /usr/local/etc/redis.conf
-```
-
-7) Import database into your Redis local instance by running 
-
-```
-npm run prepopulate
-```
- 
 ### Conceptual Model
 We selected Order, Customer, Location, Meal, Brand, and Pickup Type to be used as in-memory key-value storages.
 ![1 2_Conceptual_model](https://user-images.githubusercontent.com/37320474/145911708-b43f95d6-436f-4130-bc50-6db832c6e521.png)
