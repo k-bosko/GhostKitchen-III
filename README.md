@@ -47,3 +47,16 @@ redis-server /usr/local/etc/redis.conf
 npm run prepopulate
 ```
  
+### Conceptual Model
+We selected Order, Customer, Location, Meal, Brand, and Pickup Type to be used as in-memory key-value storages.
+![1 2_Conceptual_model](https://user-images.githubusercontent.com/37320474/145911708-b43f95d6-436f-4130-bc50-6db832c6e521.png)
+
+# Work Distribution
+Jiayi Li worked on creating the Admin page and CRUD Meals and Orders collections.
+
+Katerina Bosko worked on creating th User page and CRUD Customers, Locations, Orders and Ratings collections.
+
+# Acknowledgement
+The data for customers collection was generated using [ https://www.mockaroo.com/](https://www.mockaroo.com/)
+
+This is a project for a Database Management Systems class at Northeastern University (Silicon Valley campus) taught by [John Alexis Guerra Gómez](https://github.com/john-guerra)
