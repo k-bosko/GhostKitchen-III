@@ -391,13 +391,13 @@ async function deleteMeal(brandIDtoDelete, mealIDtoDelete) {
   try {
     clientRedis = await getConnection();
     //remove from the list of current orders
-    return await clientRedis.sendCommand([
+    await clientRedis.sendCommand([
       "SREM",
       `brand:${brandIDtoDelete.toString()}:meals`,
       `${mealIDtoDelete.toString()}`,
     ]);
 
-    return await clientRedis.sendCommand([
+    await clientRedis.sendCommand([
       "DEL",
       `brand:${brandIDtoDelete.toString()}:meal:${mealIDtoDelete.toString()}`,
     ]);
